@@ -1,17 +1,17 @@
-CREATE TABLE usf_connection_types (
+CREATE TABLE IF NOT EXISTS usf_connection_types (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	code TEXT,
 	name TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE usf_connection_groups (
+CREATE TABLE IF NOT EXISTS usf_connection_groups (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL,
 	connection_type_id INTEGER,
 	FOREIGN KEY(connection_type_id) REFERENCES usf_connection_types(id)
 );
 
-CREATE TABLE usf_connections (
+CREATE TABLE IF NOT EXISTS usf_connections (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL,
 	short_name TEXT,
@@ -30,7 +30,7 @@ CREATE TABLE usf_connections (
 	FOREIGN KEY(connection_group_id) REFERENCES usf_connection_groups(id)
 );
 
-CREATE TABLE usf_processes (
+CREATE TABLE IF NOT EXISTS usf_processes (
     pid TEXT PRIMARY KEY,
     type TEXT,
     status TEXT,
@@ -42,7 +42,7 @@ CREATE TABLE usf_processes (
     details TEXT
 );
 
-CREATE TABLE usf_query_history (
+CREATE TABLE IF NOT EXISTS usf_query_history (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	query_text TEXT NOT NULL,
 	timestamp TEXT NOT NULL,
