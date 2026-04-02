@@ -3,6 +3,7 @@ Main application entry point. Initializes the app and launches the MainWindow.
 """
 
 import sys
+import os
 import logging
 from PySide6.QtWidgets import QApplication
 from app.appdb.setup import initialize

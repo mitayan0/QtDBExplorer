@@ -1,38 +1,40 @@
-"""
-Helper used to dynamically load raw Qt .ui files and link them to python logic classes.
-"""
-
 import os
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import QFile, QIODevice
+from PySide6.QtCore import QFile, QObject
+from PySide6.QtWidgets import QMainWindow, QWidget
 
-class UiLoader(QUiLoader):
-    """Custom UI loader to permit promoting widgets if needed later."""
-    def __init__(self, baseinstance, customWidgets=None):
-        super(UiLoader, self).__init__(baseinstance)
-        self.baseinstance = baseinstance
-
-    def createWidget(self, className, parent=None, name=''):
-        if parent is None and self.baseinstance:
-            return self.baseinstance
-        else:
-            return super(UiLoader, self).createWidget(className, parent, name)
-
-def load_ui(ui_file_path, base_instance=None):
+def load_ui(ui_file_path, base_instance):
     """
-    Loads a .ui file onto a base instance or returns a new widget.
-    Path is relative to the app/ui directory.
+    Loads a .ui file and maps its children to base_instance.
     """
-    # Resolve absolute path to the UI file
     current_dir = os.path.dirname(os.path.abspath(__file__))
     ui_abs_path = os.path.join(current_dir, "..", "ui", ui_file_path)
     
     file = QFile(ui_abs_path)
     if not file.open(QFile.ReadOnly):
         raise IOError(f"Cannot open UI file: {ui_abs_path}")
-        
-    loader = UiLoader(base_instance)
-    widget = loader.load(file, base_instance)
+    
+    loader = QUiLoader()
+    # Loading as a child of base_instance
+    ui = loader.load(file, base_instance)
     file.close()
     
-    return widget
+    if not ui:
+        raise RuntimeError(f"Failed to load UI: {ui_abs_path}")
+        
+    # Keep the reference to 'ui' to prevent garbage collection
+    base_instance._ui_ref = ui
+    
+    # Map all children of 'ui' to 'base_instance'
+    for child in ui.findChildren(QObject):
+        name = child.objectName()
+        if name:
+            setattr(base_instance, name, child)
+            
+    # For QMainWindow, we need to handle special cases if the loaded UI is a QMainWindow
+    if isinstance(base_instance, QMainWindow):
+        # Only set the central widget if it exists and is different
+        if hasattr(ui, "centralwidget"):
+            base_instance.setCentralWidget(ui.centralwidget)
+            
+    return ui
