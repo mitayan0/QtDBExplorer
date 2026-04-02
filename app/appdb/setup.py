@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 # Resolving paths
 ROOT_DIR = Path(__file__).parent.parent.parent
 DATA_DIR = ROOT_DIR / "data"
-DB_PATH = DATA_DIR / "appdata.db"
+DB_PATH = DATA_DIR / "hierarchy.db"
 MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 
 def get_connection() -> sqlite3.Connection:

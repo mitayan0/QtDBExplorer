@@ -43,4 +43,4 @@ QtDBExplorer/
 ```
 
 ## 🛡 Security
-Passwords in `appdata.db` are encrypted. To decrypt, the app requires the unique key stored in the machine's OS Keystore. Database files are not portable across users without re-entering credentials.
+Passwords in `hierarchy.db` are encrypted. To decrypt, the app requires the unique key stored in the machine's OS Keystore. Database files are not portable across users without re-entering credentials.
